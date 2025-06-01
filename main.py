@@ -1,8 +1,10 @@
+
 import pygame
 import os
 import random
 import sys
 import random
+
 
 # Инициализация Pygame
 pygame.init()
@@ -25,11 +27,10 @@ FPS = 120
 clock = pygame.time.Clock()
 
 class Character:
-    def __init__(self, x, y,name,index):
+    def __init__(self, x, y,name):
         self.x = x
         self.y = y
         self.name = name
-        self.index = index
 
         self.width =330
         self.height = 394
@@ -96,27 +97,27 @@ class Character:
 
         self.rage = 0
 
-        self.hits_data = [
+        self.hits_data = {
 
-            {'Blue':{'attack1':2,'attack2':2,'block':1,'crouch':1,'jump':[1,2,3],'knife':[5,6],'leg':5}},
+            'Blue':{'attack1':2,'attack2':2,'block':1,'crouch':1,'jump':[1,2,3],'knife':[5,6],'leg':5},
 
-            {'Red':{'attack1':2,'attack2':2,'block':1,'crouch':1,'jump':[1,2,3],'knife':[5,6],'leg':5}}
+            'Red':{'attack1':2,'attack2':2,'block':1,'crouch':1,'jump':[1,2,3],'knife':[5,6],'leg':5}
 
-        ]
+        }
 
-        self.heroes_data = [
+        self.heroes_data = {
 
-            {'Blue':{'name':'Tony','HP':220,'DEF':3,'DMG':2,'RAGE':2}},
+        'Blue': {'name': 'Tony','HP': 220,'DEF': 3,'DMG': 2,'RAGE': 3},
 
-            {'Red':{'name':'Ki Su','HP':180,'DEF':1,'DMG':10,'RAGE':1}}
+        'Red': {'name': 'Ki Su','HP': 180,'DEF': 1,'DMG': 6,'RAGE': 1}
 
-        ]
+        }
 
-        self.heroname = self.heroes_data[self.index][self.name]['name']
-        self.fullhealth = self.heroes_data[self.index][self.name]['HP']
-        self.defence = self.heroes_data[self.index][self.name]['DEF']
-        self.damage = self.heroes_data[self.index][self.name]['DMG']
-        self.ragex = self.heroes_data[self.index][self.name]['RAGE']
+        self.heroname = self.heroes_data[self.name]['name']
+        self.fullhealth = self.heroes_data[self.name]['HP']
+        self.defence = self.heroes_data[self.name]['DEF']
+        self.damage = self.heroes_data[self.name]['DMG']
+        self.ragex = self.heroes_data[self.name]['RAGE']
 
         self.health = self.fullhealth
         
@@ -231,7 +232,7 @@ class Character:
 
         if gameplay:
         
-            if self.state == 'attack1' and int(self.animation_count) == self.hits_data[self.index][self.name]['attack1']:
+            if self.state == 'attack1' and int(self.animation_count) == self.hits_data[self.name]['attack1']:
 
                 self.Rattack = True
 
@@ -241,7 +242,7 @@ class Character:
                 self.Rknife = False
                 self.Rleg = False
 
-            elif self.state == 'attack2' and int(self.animation_count) == self.hits_data[self.index][self.name]['attack2']:
+            elif self.state == 'attack2' and int(self.animation_count) == self.hits_data[self.name]['attack2']:
 
                 self.Rattack = True
 
@@ -251,7 +252,7 @@ class Character:
                 self.Rknife = False
                 self.Rleg = False
 
-            elif self.state == 'block' and int(self.animation_count) == self.hits_data[self.index][self.name]['block']:
+            elif self.state == 'block' and int(self.animation_count) == self.hits_data[self.name]['block']:
 
                 self.Rblock = True
 
@@ -261,7 +262,7 @@ class Character:
                 self.Rknife = False
                 self.Rleg = False
 
-            elif self.state == 'crouch' and int(self.animation_count) == self.hits_data[self.index][self.name]['crouch']:
+            elif self.state == 'crouch' and int(self.animation_count) == self.hits_data[self.name]['crouch']:
 
                 self.Rcrouch = True
 
@@ -271,7 +272,7 @@ class Character:
                 self.Rknife = False
                 self.Rleg = False
 
-            elif self.state == 'jump' and int(self.animation_count) in self.hits_data[self.index][self.name]['jump']:
+            elif self.state == 'jump' and int(self.animation_count) in self.hits_data[self.name]['jump']:
 
                 self.Rjump = True
 
@@ -281,7 +282,7 @@ class Character:
                 self.Rknife = False
                 self.Rleg = False
 
-            elif self.state == 'knife' and int(self.animation_count) in self.hits_data[self.index][self.name]['knife']:
+            elif self.state == 'knife' and int(self.animation_count) in self.hits_data[self.name]['knife']:
 
                 self.Rknife = True
 
@@ -291,7 +292,7 @@ class Character:
                 self.Rjump = False
                 self.Rleg = False
 
-            elif self.state == 'leg' and int(self.animation_count) == self.hits_data[self.index][self.name]['leg']:
+            elif self.state == 'leg' and int(self.animation_count) == self.hits_data[self.name]['leg']:
 
                 self.Rleg = True
 
@@ -458,18 +459,99 @@ class Character:
     def lose1(self,player2es):
         self.lose = True
 
-# Создание персонажа
-player1 = Character(315, 250,'Blue',0)
-player2 = Character(630, 250,'Red',1)
+class RectDraw(pygame.sprite.Sprite):
+    def __init__(self, color):
+        super().__init__()
+        self.image = pygame.Surface((0, 0))
+        self.rect = self.image.get_rect()
+        self.color = color
+    
+    def update_surf(self, size, line=0):
+        pygame.draw.rect(screen, self.color, size, line)
 
-start_menu = True
+class IconDraw(pygame.sprite.Sprite):
+    def __init__(self, filedir, x, y):
+        super().__init__()
+        self.image = pygame.transform.scale(pygame.image.load('assets/heroes/'+filedir+'/icon.png'), (160, 160))
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.filedir = filedir  
+    
+    def update_surf(self):
+        screen.blit(self.image, self.rect)
+
+class TextDraw(pygame.sprite.Sprite):
+    def __init__(self, text):
+        super().__init__()
+        self.image = font1.render(text, True, (255, 255, 255))
+        self.rect = self.image.get_rect()
+    
+    def update_surf(self, x, y):
+        screen.blit(self.image, (x, y))
+
+
+def start_start_anim(gameplay,start_anim):
+    global count_startanim, counting 
+    gameplay = False
+    if count_startanim == 0:
+        count_startanim = 25
+        counting += 1
+    elif count_startanim > 0:
+        count_startanim -= 1
+    if counting >3:
+        start_anim = False
+        gameplay = True
+    else:
+        if counting == 3:
+            start_label = pygame.transform.scale(pygame.image.load('assets/start/' + str(counting) + '.png'), (744, 300))
+            screen.blit(start_label, (300, 230))
+        else:
+            start_label = pygame.transform.scale(pygame.image.load('assets/start/' + str(counting) + '.png'), (300, 300))
+            screen.blit(start_label, (490, 210))
+    return gameplay,start_anim
+
+def start_game(gameplay,start_anim,selected,choose_menu,gamerun):
+    player1 = Character(315, 250,selected[0])
+    player2 = Character(630, 250,selected[1])
+    gameplay = True
+    start_anim = True
+    choose_menu = False
+    gamerun = True
+    return player1,player2,gameplay,start_anim,choose_menu,gamerun
+
+selected = []
+
+counting = 0
+count_startanim = 25
+
+start_menu = False
 choose_menu = True
-gamerun = True
-gameplay = True
+
+gamerun = False
+gameplay = False
+
 running = True
+
 space_pressed = False
 ctrl_pressed = False
 shift_pressed = False
+
+start_anim = False
+
+selected_hero = None
+
+heroes_data_cards = {
+
+'Blue': {'name': 'Tony','HP': 220,'DEF': 3,'DMG': 2,'RAGE': 2,'BACKGROUND_C': (0, 128, 255)},
+
+'Red': {'name': 'Ki Su','HP': 180,'DEF': 1,'DMG': 10,'RAGE': 1,'BACKGROUND_C': (255, 51, 51)}
+
+}
+
+folder_path = "assets/heroes"
+hero_folders = []
+for d in os.listdir(folder_path):
+    if os.path.isdir(os.path.join(folder_path, d)):
+        hero_folders.append(d)
 
 while running:
 
@@ -592,61 +674,56 @@ while running:
                 gameplay = False
 
         for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
+            if event.type == pygame.QUIT:
+                running = False
 
-                if event.type == pygame.KEYDOWN:
-                    if gameplay:
-                        if event.key == pygame.K_d:  
-                            player1.attack()
-                        elif event.key == pygame.K_w:   
-                            player1.jump()
-                        elif event.key == pygame.K_f:  
-                            player1.legp()
-                        elif event.key == pygame.K_r:   
-                            player1.knifedd()
-                        elif event.key == pygame.K_s:  
-                            player1.crouch(True)
-                        elif event.key == pygame.K_a:
-                            player1.block(True)
-                        elif event.key == pygame.K_t:
-                            if player1.rage == 200:
-                                player1.Rrage = True
-                        elif event.key == pygame.K_ESCAPE:
-                            running = False
+            if event.type == pygame.KEYDOWN:
+                if gameplay:
+                    if event.key == pygame.K_d:  
+                        player1.attack()
+                    elif event.key == pygame.K_w:   
+                        player1.jump()
+                    elif event.key == pygame.K_f:  
+                        player1.legp()
+                    elif event.key == pygame.K_r:   
+                        player1.knifedd()
+                    elif event.key == pygame.K_s:  
+                        player1.crouch(True)
+                    elif event.key == pygame.K_a:
+                        player1.block(True)
+                    elif event.key == pygame.K_t:
+                        if player1.rage == 200:
+                            player1.Rrage = True
 
 
-                        if event.key == pygame.K_LEFT:
-                            player2.attack()
-                        elif event.key == pygame.K_UP:
-                            player2.jump()
-                        elif event.key == pygame.K_l:
-                            player2.legp()
-                        elif event.key == pygame.K_k:
-                            player2.knifedd()
-                        elif event.key == pygame.K_DOWN:
-                            player2.crouch(True)
-                        elif event.key == pygame.K_RIGHT:
-                            player2.block(True)
-                        elif event.key == pygame.K_j:
-                            if player2.rage == 200:
-                                player2.Rrage = True
-                        elif event.key == pygame.K_ESCAPE:
-                            running = False
+
+                    if event.key == pygame.K_LEFT:
+                        player2.attack()
+                    elif event.key == pygame.K_UP:
+                        player2.jump()
+                    elif event.key == pygame.K_l:
+                        player2.legp()
+                    elif event.key == pygame.K_k:
+                        player2.knifedd()
+                    elif event.key == pygame.K_DOWN:
+                        player2.crouch(True)
+                    elif event.key == pygame.K_RIGHT:
+                        player2.block(True)
+                    elif event.key == pygame.K_j:
+                        if player2.rage == 200:
+                            player2.Rrage = True
                     
             
-                if event.type == pygame.KEYUP:
-                    if gameplay:
-                        if event.key == pygame.K_s:
-                            player1.crouch(False)
-                        elif event.key == pygame.K_a:
-                            player1.block(False)
-                        elif event.key == pygame.K_DOWN:
-                            player2.crouch(False)
-                        elif event.key == pygame.K_RIGHT:
-                            player2.block(False)
-                    elif event.key == pygame.K_ESCAPE:
-                        running = False
+            elif event.type == pygame.KEYUP:
+                if gameplay:
+                    if event.key == pygame.K_s:
+                        player1.crouch(False)
+                    elif event.key == pygame.K_a:
+                        player1.block(False)
+                    elif event.key == pygame.K_DOWN:
+                        player2.crouch(False)
+                    elif event.key == pygame.K_RIGHT:
+                        player2.block(False)
         
         screen.blit(background,(0,0))
 
@@ -655,6 +732,9 @@ while running:
 
         player1.update(False) 
         player2.update(True)
+
+        if start_anim == True:
+           gameplay,start_anim = start_start_anim(gameplay,start_anim)
 
         pygame.draw.rect(screen,(255,0,0),player1.rect_pos_RED)
         pygame.draw.rect(screen,(0,255,0),player1.rect_pos_GREEN)
@@ -679,14 +759,90 @@ while running:
         HP = font1.render('HP:'+str(player2.health)+'/'+str(player2.fullhealth),True,(0,100,0))
         screen.blit(HP,(1170,682))
 
-    # else:
-    #     if choose_menu:
-    #         pygame.draw.rect(screen,(96,96,96),[0,0,WIDTH,HEIGHT])
+    else:
+        if choose_menu:
+            pygame.draw.rect(screen,(96,96,96),[0,0,WIDTH,HEIGHT])
+            pygame.draw.rect(screen,(50,50,50),[0,0,WIDTH,HEIGHT],15)
+            choose_a_hero = font1.render('choose a hero',True,(255,255,255))
+            screen.blit(choose_a_hero,(570,680))
+            items = os.listdir(folder_path)
+
+            counter = 0
+            row = 0
+
+            icons = []
+            
+            for i, hero_folder in enumerate(hero_folders):
+
+                hero_data = heroes_data_cards.get(hero_folder)
+
+                x_pos = 20 + counter * 270
+                y_pos = 20 + row * 320
+
+                background_card = RectDraw(hero_data['BACKGROUND_C'])
+                background_card.update_surf((x_pos, y_pos, 250, 300))
+
+                line_card = RectDraw((50, 50, 50))
+                line_card.update_surf((x_pos, y_pos, 250, 300), 10)
+
+                icon = IconDraw(hero_folder, x_pos + 10, y_pos + 10)
+                icon.update_surf()
+                icons.append(icon)
+
+
+                instructions = [
+                f"Name: {hero_data['name']}",
+                f"Health: {hero_data['HP']}",
+                f"Damage: x{hero_data['DMG']}",
+                f"Defence: x{hero_data['DEF']}",
+                f"Rage: x{hero_data['RAGE']}"
+            ]
+        
+                for j, text in enumerate(instructions):
+                    rendered = TextDraw(text)
+                    rendered.update_surf(x_pos + 13, y_pos + 180 + j * 23)
+
+                counter+=1
+                if counter == 4:
+                    row+=1
+                    counter = 0
+                if row >= 3:
+                    items.remove(filedir)
+
+        
 
 
 
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    for icon in icons:
+                        if icon.rect.collidepoint(event.pos):
+                            selected_hero = icon.filedir
+                            print(f"Selected hero: {selected_hero}")
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:  
+                        selected_hero = None
+                        selected.clear()
+                    elif event.key == pygame.K_SPACE:  
+                        player1,player2,gameplay,start_anim,choose_menu,gamerun = start_game(gameplay,start_anim,selected,choose_menu,gamerun)
 
-    pygame.display.flip()
+            if selected_hero:
+                if not selected_hero in selected:
+                    selected.append(selected_hero)
+                instruc = font1.render('Q - reset Enter - start',True,(255,255,255))
+                screen.blit(instruc, (20, HEIGHT - 65))
+                if len(selected) > 1:
+
+                    selection_text = font1.render(f"Selected: {heroes_data_cards[selected[0]]['name']} and {heroes_data_cards[selected[1]]['name']}", True, (255, 255, 0))
+                
+                else:
+
+                    selection_text = font1.render(f"Selected: {heroes_data_cards[selected[0]]['name']}", True, (255, 255, 0))
+
+                screen.blit(selection_text, (20, HEIGHT - 40))
+    pygame.display.update()
     clock.tick(FPS)
 pygame.quit()
 sys.exit()
