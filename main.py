@@ -12,6 +12,7 @@ pygame.init()
 BLACK = (0,0,0)
 
 font1 = pygame.font.SysFont(None, 30)
+font2 = pygame.font.SysFont(None, 60)
 
 # Настройки окна
 WIDTH = 1280
@@ -99,19 +100,13 @@ class Character:
 
         self.hits_data = {
 
-            'Blue':{'attack1':2,'attack2':2,'block':1,'crouch':1,'jump':[1,2,3],'knife':[5,6],'leg':5},
+            'Blue':{'attack1':1,'attack2':1,'block':1,'crouch':1,'jump':[1,2,3],'knife':[5,6],'leg':5},
 
-            'Red':{'attack1':2,'attack2':2,'block':1,'crouch':1,'jump':[1,2,3],'knife':[5,6],'leg':5}
-
-        }
-
-        self.heroes_data = {
-
-        'Blue': {'name': 'Tony','HP': 220,'DEF': 3,'DMG': 2,'RAGE': 3},
-
-        'Red': {'name': 'Ki Su','HP': 180,'DEF': 1,'DMG': 6,'RAGE': 1}
+            'Red':{'attack1':1,'attack2':1,'block':1,'crouch':1,'jump':[1,2,3],'knife':[5,6],'leg':5}
 
         }
+
+        self.heroes_data = heroes_data_cards
 
         self.heroname = self.heroes_data[self.name]['name']
         self.fullhealth = self.heroes_data[self.name]['HP']
@@ -132,12 +127,12 @@ class Character:
         animation_data = {
             "idle": {"folder": "assets/heroes/"+self.name+"/idle", "frames": 13},
             "attack1": {"folder": "assets/heroes/"+self.name+"/attack1", "frames": 3},
-            "attack2": {"folder": "assets/heroes/"+self.name+"/attack2", "frames": 4},
+            "attack2": {"folder": "assets/heroes/"+self.name+"/attack2", "frames": 3},
             "crouch": {"folder": "assets/heroes/"+self.name+"/crouch", "frames": 2},
             "block": {"folder": "assets/heroes/"+self.name+"/block", "frames": 2},
             "jump": {"folder": "assets/heroes/"+self.name+"/jump", "frames": 5},
             "knife": {"folder": "assets/heroes/"+self.name+"/knife", "frames": 8},
-            "leg": {"folder": "assets/heroes/"+self.name+"/leg", "frames": 12},
+            "leg": {"folder": "assets/heroes/"+self.name+"/leg", "frames": 13},
         }
         
         for state, data in animation_data.items():
@@ -201,6 +196,7 @@ class Character:
                         if self.count <= 0:
                             self.x+=5
                             self.count = 1
+                    
                 else:
                     if self.x < 200:
                         if self.count <= 0:
@@ -210,7 +206,7 @@ class Character:
                         if self.count <= 0:
                             self.x-=5
                             self.count = 1
- 
+                
         if self.last_state != self.state:
             self.animation_count = 0
             self.last_state = self.state
@@ -225,7 +221,7 @@ class Character:
 
         if player2es:
             self.rect_pos_RAGE1 = [WIDTH-100*2,650,100*2,20]
-            self.rect_pos_RAGE2 = [1280,650,-self.rage,20]
+            self.rect_pos_RAGE2 = [1280,650,-self.rage,20] 
         else:
             self.rect_pos_RAGE1 = [0,650,100*2,20]
             self.rect_pos_RAGE2 = [0,650,self.rage,20]
@@ -313,48 +309,48 @@ class Character:
             
             speed = self.reverse_speeds.get(self.state, self.animation_speeds.get(self.state, 0.1))
             
-            if self.state == "idle":
-                if player2es:
-                    self.x = 630
-                    self.y = 250
-                else:
-                    self.x = 315
-                    self.y = 237
-            if self.state == "attack1":
-                if player2es:
-                    self.x = 530
-                    self.y = 250
-                else:
-                    self.x = 315
-                    self.y = 237
-            if self.state == "attack2":
-                if player2es:
-                    self.x = 580
-                    self.y = 250
-                else:
-                    self.x = 315
-                    self.y = 237
-            if self.state == "knife":
-                if player2es:
-                    self.x = 580
-                    self.y = 250
-                else:
-                    self.x = 315
-                    self.y = 237
-            if self.state == "jump":
-                if player2es:
-                    self.x = 630
-                    self.y = 200
-                else:
-                    self.x = 315
-                    self.y = 195
-            if self.state == "crouch":
-                if player2es:
-                    self.x = 620
-                    self.y = 257
-                else:
-                    self.x = 315
-                    self.y = 237
+            # if self.state == "idle":
+            #     if player2es:
+            #         self.x = 630
+            #         self.y = 250
+            #     else:
+            #         self.x = 315
+            #         self.y = 237
+            # if self.state == "attack1":
+            #     if player2es:
+            #         self.x = 530
+            #         self.y = 250
+            #     else:
+            #         self.x = 315
+            #         self.y = 237
+            # if self.state == "attack2":
+            #     if player2es:
+            #         self.x = 580
+            #         self.y = 250
+            #     else:
+            #         self.x = 315
+            #         self.y = 237
+            # if self.state == "knife":
+            #     if player2es:
+            #         self.x = 580
+            #         self.y = 250
+            #     else:
+            #         self.x = 315
+            #         self.y = 237
+            # if self.state == "jump":
+            #     if player2es:
+            #         self.x = 630
+            #         self.y = 200
+            #     else:
+            #         self.x = 315
+            #         self.y = 195
+            # if self.state == "crouch":
+            #     if player2es:
+            #         self.x = 620
+            #         self.y = 257
+            #     else:
+            #         self.x = 315
+            #         self.y = 237
 
 
             if not self.reverse_animation:
@@ -451,11 +447,7 @@ class Character:
             self.knife = True
             self.attack_cooldown = 2
     def win1(self,player2es):
-        self.win = True
-        # for i in range(20):
-        #     if player2es:
-        #         self.x+=
-            
+        self.win = True       
     def lose1(self,player2es):
         self.lose = True
 
@@ -480,14 +472,16 @@ class IconDraw(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect)
 
 class TextDraw(pygame.sprite.Sprite):
-    def __init__(self, text):
+    def __init__(self, text,font=False):
         super().__init__()
-        self.image = font1.render(text, True, (255, 255, 255))
+        if font:
+            self.image = font2.render(text, True, (255, 255, 255))
+        else:
+            self.image = font1.render(text, True, (255, 255, 255))
         self.rect = self.image.get_rect()
     
-    def update_surf(self, x, y):
+    def update_surf(self,x,y):
         screen.blit(self.image, (x, y))
-
 
 def start_start_anim(gameplay,start_anim):
     global count_startanim, counting 
@@ -510,42 +504,35 @@ def start_start_anim(gameplay,start_anim):
     return gameplay,start_anim
 
 def start_game(gameplay,start_anim,selected,choose_menu,gamerun):
-    player1 = Character(315, 250,selected[0])
-    player2 = Character(630, 250,selected[1])
+    player1 = Character(310, 200,selected[0])
+    player2 = Character(570, 200,selected[1])
     gameplay = True
     start_anim = True
     choose_menu = False
     gamerun = True
     return player1,player2,gameplay,start_anim,choose_menu,gamerun
 
-selected = []
-
-counting = 0
-count_startanim = 25
-
-start_menu = False
-choose_menu = True
-
-gamerun = False
-gameplay = False
-
-running = True
+space_esc_text = TextDraw('press "Space" to restart',True)
 
 space_pressed = False
 ctrl_pressed = False
 shift_pressed = False
 
-start_anim = False
+counting = 0
+count_startanim = 25
 
-selected_hero = None
+def reset():
+    return False, True, False, False, True, False, None, []
 
 heroes_data_cards = {
 
 'Blue': {'name': 'Tony','HP': 220,'DEF': 3,'DMG': 2,'RAGE': 2,'BACKGROUND_C': (0, 128, 255)},
 
-'Red': {'name': 'Ki Su','HP': 180,'DEF': 1,'DMG': 10,'RAGE': 1,'BACKGROUND_C': (255, 51, 51)}
+'Red': {'name': 'Ki Su','HP': 180,'DEF': 1,'DMG': 6,'RAGE': 1.5,'BACKGROUND_C': (255, 51, 51)}
 
 }
+
+start_menu, choose_menu, gamerun, gameplay, running, start_anim, selected_hero, selected = reset()
 
 folder_path = "assets/heroes"
 hero_folders = []
@@ -563,15 +550,19 @@ while running:
                 if not player2.Rblock and not player2.Rcrouch:
                     if player2.invis_cooldown == 0:
                         if player1.Rrage:
-                            player2.health -= int((random.randint(2,7)*player1.damage))*3
+                            player2.health -= int((random.randint(12,15)*player1.damage))*2
                         else:
-                            player2.health -= int((random.randint(2,7)*player1.damage)/random.choice([1,player2.defence]))
+                            player2.health -= int((random.randint(12,15)*player1.damage)/random.choice([1,player2.defence]))
                         player2.invis_cooldown = 15
                         player2.ragecooldown = 40
-                        player2.rage += random.randint(7,15)*player2.ragex
+                        player2.rage += random.randint(5,10)*player2.ragex
                         if not player1.Rrage:
                             player1.ragecooldown = 20
-                            player1.rage += random.randint(5,10)*player1.ragex
+                            player1.rage += random.randint(7,15)*player1.ragex
+                elif player2.Rblock:
+                    player2.health+=int(player2.fullhealth/100*2)
+                    if player2.health>=player2.fullhealth:
+                        player2.health = player2.fullhealth
                 else:
                     player2.rage += random.randint(4,7)*player2.ragex
             
@@ -580,15 +571,19 @@ while running:
                 if not player1.Rblock and not player1.Rcrouch:
                     if player1.invis_cooldown == 0:
                         if player2.Rrage:
-                            player1.health -= int((random.randint(1,2)*player2.damage))*3
+                            player1.health -= int((random.randint(2,7)*player2.damage))*3
                         else:
-                            player1.health -= int((random.randint(1,2)*player2.damage)/random.choice([1,player1.defence]))
+                            player1.health -= int((random.randint(2,7)*player2.damage)/random.choice([1,player1.defence]))
                         player1.invis_cooldown = 15
                         player1.ragecooldown = 40
-                        player1.rage += random.randint(5,15)*player1.ragex
+                        player1.rage += random.randint(5,10)*player1.ragex
                         if not player2.Rrage:
                             player2.ragecooldown = 20
                             player2.rage += random.randint(7,15)*player2.ragex
+                elif player1.Rblock:
+                    player1.health+=int(player1.fullhealth/100*2)
+                    if player1.health>=player1.fullhealth:
+                        player1.health = player1.fullhealth
                 else:
                     player1.rage += random.randint(4,7)*player1.ragex
 
@@ -603,7 +598,7 @@ while running:
                             player2.health -= int((random.randint(2,7)*player1.damage)/random.choice([1,player2.defence]))
                         player2.invis_cooldown = 15
                         player2.ragecooldown = 40
-                        player2.rage += random.randint(5,15)*player2.ragex
+                        player2.rage += random.randint(5,10)*player2.ragex
                         if not player1.Rrage:
                             player1.ragecooldown = 20
                             player1.rage += random.randint(5,10)*player1.ragex
@@ -616,12 +611,12 @@ while running:
                         if player1.state == 'block':
                             player1.state = 'idle'
                         if player2.Rrage:
-                            player1.health -= int((random.randint(1,2)*player2.damage))*3
+                            player1.health -= int((random.randint(2,7)*player2.damage))*3
                         else:
-                            player1.health -= int((random.randint(1,2)*player2.damage)/random.choice([1,player1.defence]))
+                            player1.health -= int((random.randint(2,7)*player2.damage)/random.choice([1,player1.defence]))
                         player1.invis_cooldown = 15
                         player1.ragecooldown = 40
-                        player1.rage += random.randint(5,15)*player1.ragex
+                        player1.rage += random.randint(5,10)*player1.ragex
                         if not player2.Rrage:
                             player2.ragecooldown = 20
                             player2.rage += random.randint(7,15)*player2.ragex
@@ -639,10 +634,10 @@ while running:
                             player2.health -= int((random.randint(2,7)*player1.damage)/random.choice([1,player2.defence]))
                         player2.invis_cooldown = 15
                         player2.ragecooldown = 40
-                        player2.rage += random.randint(5,15)*player2.ragex
+                        player2.rage += random.randint(5,10)*player2.ragex
                         if not player1.Rrage:
                             player1.ragecooldown = 20
-                            player1.rage += random.randint(5,10)*player1.ragex
+                            player1.rage += random.randint(7,15)*player1.ragex
                 else:
                     player2.rage += random.randint(4,7)*player2.ragex
 
@@ -652,12 +647,12 @@ while running:
                         if player1.state == 'crouch':
                             player1.state = 'idle'
                         if player2.Rrage:
-                            player1.health -= int((random.randint(1,2)*player2.damage))*3
+                            player1.health -= int((random.randint(2,7)*player2.damage))*3
                         else:
-                            player1.health -= int((random.randint(1,2)*player2.damage)/random.choice([1,player1.defence]))
+                            player1.health -= int((random.randint(2,7)*player2.damage)/random.choice([1,player1.defence]))
                         player1.invis_cooldown = 15
                         player1.ragecooldown = 40
-                        player1.rage += random.randint(5,15)*player1.ragex
+                        player1.rage += random.randint(5,10)*player1.ragex
                         if not player2.Rrage:
                             player2.ragecooldown = 20
                             player2.rage += random.randint(7,15)*player2.ragex
@@ -678,6 +673,11 @@ while running:
                 running = False
 
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    start_menu, choose_menu, gamerun, gameplay, running, start_anim, selected_hero, selected = reset()
+                if player1.lose or player1.win:
+                    if event.key == pygame.K_SPACE:  
+                        start_menu, choose_menu, gamerun, gameplay, running, start_anim, selected_hero, selected = reset()
                 if gameplay:
                     if event.key == pygame.K_d:  
                         player1.attack()
@@ -730,8 +730,10 @@ while running:
         player1.draw(screen,False)
         player2.draw(screen,True)
 
-        player1.update(False) 
-        player2.update(True)
+        player1.update(False)
+        player2.update(True) 
+        if player1.lose or player1.win:
+            space_esc_text.update_surf(350,650)
 
         if start_anim == True:
            gameplay,start_anim = start_start_anim(gameplay,start_anim)
@@ -825,13 +827,14 @@ while running:
                     if event.key == pygame.K_q:  
                         selected_hero = None
                         selected.clear()
-                    elif event.key == pygame.K_SPACE:  
-                        player1,player2,gameplay,start_anim,choose_menu,gamerun = start_game(gameplay,start_anim,selected,choose_menu,gamerun)
+                    elif event.key == pygame.K_SPACE:
+                        if len(selected) == 2:  
+                            player1,player2,gameplay,start_anim,choose_menu,gamerun = start_game(gameplay,start_anim,selected,choose_menu,gamerun)
 
             if selected_hero:
                 if not selected_hero in selected:
                     selected.append(selected_hero)
-                instruc = font1.render('Q - reset Enter - start',True,(255,255,255))
+                instruc = font1.render('"Q" - reset "Space" - start',True,(255,255,255))
                 screen.blit(instruc, (20, HEIGHT - 65))
                 if len(selected) > 1:
 
@@ -840,6 +843,8 @@ while running:
                 else:
 
                     selection_text = font1.render(f"Selected: {heroes_data_cards[selected[0]]['name']}", True, (255, 255, 0))
+                if len(selected) > 2:
+                    del selected[2]
 
                 screen.blit(selection_text, (20, HEIGHT - 40))
     pygame.display.update()
